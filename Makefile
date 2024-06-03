@@ -135,10 +135,10 @@ build-images:
 
 .PHONY: build-collector
 build-collector:
-	ocb --config ./collector/manifest.yaml
+	ocb --config ./collector/manifest.yaml --skip-strict-versioning
 
 .PHONY: build-image-collector
-build-image-collector: build-collector
+build-image-collector:
 	docker build -t $(COLLECTOR_IMAGE_REPO):$(IMAGE_TAG) -f ./dockerfiles/Dockerfile.collector .
 
 .PHONY: push-images

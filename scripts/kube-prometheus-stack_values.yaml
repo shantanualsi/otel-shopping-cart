@@ -1,4 +1,27 @@
 grafana:
+  image: 
+    repository: grafana/grafana
+    tag: 11.0.0
+  extraVolumeMounts:
+    - name: grafana-storage
+      mountPath: /var/lib/grafana/plugins
+  extraVolumes:
+    - name: grafana-storage
+      emptyDir: {}
+  extraInitContainers:
+    - name: install-plugins
+      image: busybox
+      command:
+        - sh
+        - -c
+        - |
+          mkdir -p /var/lib/grafana/plugins/grafana-lokiexplore-app;
+          wget -qO /tmp/grafana-lokiexplore-app-latest.zip https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;
+          unzip /tmp/grafana-lokiexplore-app-latest.zip -d /var/lib/grafana/plugins/grafana-lokiexplore-app;
+          rm -f /tmp/grafana-lokiexplore-app-latest.zip;
+      volumeMounts:
+        - name: grafana-storage
+          mountPath: "/var/lib/grafana/plugins"
   grafana.ini:
     auth:
       disable_login_form: true
@@ -7,7 +30,7 @@ grafana:
       disable_signout_menu: true
     auth.anonymous:
       enabled: true
-      org_role: Editor
+      org_role: Admin
   additionalDataSources:
     - name: Tempo
       url: http://tempo:3100

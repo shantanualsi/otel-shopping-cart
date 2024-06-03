@@ -4,12 +4,10 @@ if ! helm repo list | grep grafana; then
     helm repo add grafana https://grafana.github.io/helm-charts
 fi
 helm repo update
-
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 helm upgrade \
     -n observability \
     --install \
-    --set loki.commonConfig.replication_factor=1 \
-    --set loki.storage.type=filesystem \
-    --set singleBinary.replicas=1 \
+    -f "${SCRIPT_DIR}/loki-values.yaml" \
     loki \
     grafana/loki

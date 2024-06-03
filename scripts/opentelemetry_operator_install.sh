@@ -10,6 +10,7 @@ helm upgrade \
     -n observability \
     --install \
     otel-operator \
+    --set manager.collectorImage.repository=otel/opentelemetry-collector \
     open-telemetry/opentelemetry-operator
 
 # nodes: [get,list,watch]

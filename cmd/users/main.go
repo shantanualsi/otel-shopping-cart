@@ -57,6 +57,7 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
+	fmt.Printf("In function Execute")
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
@@ -75,6 +76,7 @@ func main() {
 }
 
 func setupObservability() (*sdktrace.TracerProvider, error) {
+	fmt.Printf("In function setupobservability")
 	tp, err := telemetry.OTLPTracerProvider(otelReceiver, "users", "v1.0.0")
 	if err != nil {
 		return nil, fmt.Errorf("error setting tracer provider: %w", err)
@@ -89,6 +91,7 @@ func setupObservability() (*sdktrace.TracerProvider, error) {
 }
 
 func validateParams() {
+	fmt.Printf("In function validateParams")
 	if dbSQLAddress == "" {
 		fmt.Println("Must pass in --db-address")
 		os.Exit(1)
@@ -111,6 +114,7 @@ func validateParams() {
 }
 
 func allUsers(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("In function allUsers")
 	httpRequest.Inc()
 	userManager := dbmanager.NewDBManager(
 		dbSQLAddress,
@@ -139,6 +143,7 @@ func allUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func user(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("In function user")
 	httpRequest.Inc()
 	ctx := r.Context()
 	ctx, span := otel.Tracer(telemetry.TelemetryLibrary).Start(ctx, "get_user")
@@ -184,10 +189,12 @@ func user(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUser(ctx context.Context, userManager users.Manager, userName string) (*users.User, error) {
+	fmt.Printf("In function getUser")
 	return userManager.GetUser(ctx, userName)
 }
 
 func runServer() {
+	fmt.Printf("In function RUNSERVER")
 	http.Handle("/metrics", promhttp.Handler())
 	http.HandleFunc(fmt.Sprintf("/%s", rootPath), allUsers)
 	http.Handle(
